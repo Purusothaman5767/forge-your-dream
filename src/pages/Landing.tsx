@@ -8,7 +8,7 @@ import sneakers from '@/assets/sneakers.jpg';
 
 const featured = [
   { name: 'Custom Gaming PC', price: '$500', image: gamingPc, desc: 'Build your dream rig from scratch' },
-  { name: 'Custom Phone Case', price: '$15', image: phoneCase, desc: 'Design a case that's uniquely yours' },
+  { name: 'Custom Phone Case', price: '$15', image: phoneCase, desc: 'Design a case that is uniquely yours' },
   { name: 'Custom Sneakers', price: '$80', image: sneakers, desc: 'Step out in your own style' },
 ];
 
