@@ -14,7 +14,162 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      builds: {
+        Row: {
+          configuration: Json
+          created_at: string
+          id: string
+          product_id: string
+          total_price: number
+          user_id: string
+        }
+        Insert: {
+          configuration?: Json
+          created_at?: string
+          id?: string
+          product_id: string
+          total_price?: number
+          user_id: string
+        }
+        Update: {
+          configuration?: Json
+          created_at?: string
+          id?: string
+          product_id?: string
+          total_price?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "builds_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      components: {
+        Row: {
+          component_type: string
+          id: string
+          name: string
+          price: number
+          product_id: string
+        }
+        Insert: {
+          component_type: string
+          id?: string
+          name: string
+          price?: number
+          product_id: string
+        }
+        Update: {
+          component_type?: string
+          id?: string
+          name?: string
+          price?: number
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "components_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          build_id: string | null
+          created_at: string
+          id: string
+          phone: string | null
+          shipping_address: string | null
+          status: string
+          total_price: number
+          user_id: string
+        }
+        Insert: {
+          build_id?: string | null
+          created_at?: string
+          id?: string
+          phone?: string | null
+          shipping_address?: string | null
+          status?: string
+          total_price?: number
+          user_id: string
+        }
+        Update: {
+          build_id?: string | null
+          created_at?: string
+          id?: string
+          phone?: string | null
+          shipping_address?: string | null
+          status?: string
+          total_price?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "builds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      products: {
+        Row: {
+          base_price: number
+          created_at: string
+          description: string | null
+          id: string
+          image: string | null
+          name: string
+        }
+        Insert: {
+          base_price?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string | null
+          name: string
+        }
+        Update: {
+          base_price?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image?: string | null
+          name?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
