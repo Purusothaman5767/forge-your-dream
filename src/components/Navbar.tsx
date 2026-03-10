@@ -2,19 +2,30 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, LogOut, Menu, X, Flame } from 'lucide-react';
-import { useState } from 'react';
+import { ShoppingCart, LogOut, Menu, X, Flame, Heart, Shield } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function Navbar() {
   const { user, signOut } = useAuth();
   const { items } = useCart();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    if (!user) { setIsAdmin(false); return; }
+    supabase.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').then(({ data }) => {
+      setIsAdmin(!!(data && data.length > 0));
+    });
+  }, [user]);
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
+
+  const navLink = "text-sm font-medium text-muted-foreground hover:text-foreground transition-colors";
 
   return (
     <nav className="sticky top-0 z-50 glass border-b">
@@ -26,17 +37,19 @@ export default function Navbar() {
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-6">
-          <Link to="/products" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-            Products
-          </Link>
+          <Link to="/products" className={navLink}>Products</Link>
           {user && (
             <>
-              <Link to="/dashboard" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Dashboard
+              <Link to="/dashboard" className={navLink}>Dashboard</Link>
+              <Link to="/orders" className={navLink}>Orders</Link>
+              <Link to="/wishlist" className={navLink}>
+                <Heart className="h-4 w-4" />
               </Link>
-              <Link to="/orders" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                Orders
-              </Link>
+              {isAdmin && (
+                <Link to="/admin" className={navLink}>
+                  <Shield className="h-4 w-4" />
+                </Link>
+              )}
             </>
           )}
           <Link to="/cart" className="relative">
@@ -59,13 +72,11 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile toggle */}
         <button className="md:hidden" onClick={() => setOpen(!open)}>
           {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
       {open && (
         <div className="md:hidden border-t bg-background p-4 space-y-3 animate-fade-in">
           <Link to="/products" className="block text-sm" onClick={() => setOpen(false)}>Products</Link>
@@ -73,6 +84,8 @@ export default function Navbar() {
             <>
               <Link to="/dashboard" className="block text-sm" onClick={() => setOpen(false)}>Dashboard</Link>
               <Link to="/orders" className="block text-sm" onClick={() => setOpen(false)}>Orders</Link>
+              <Link to="/wishlist" className="block text-sm" onClick={() => setOpen(false)}>Wishlist</Link>
+              {isAdmin && <Link to="/admin" className="block text-sm" onClick={() => setOpen(false)}>Admin</Link>}
             </>
           )}
           <Link to="/cart" className="block text-sm" onClick={() => setOpen(false)}>Cart ({items.length})</Link>

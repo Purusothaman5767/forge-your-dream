@@ -6,15 +6,8 @@ import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { ShoppingCart, Save, AlertTriangle, Check } from 'lucide-react';
-import gamingPcImg from '@/assets/gaming-pc.jpg';
-import phoneCaseImg from '@/assets/phone-case.jpg';
-import sneakersImg from '@/assets/sneakers.jpg';
-
-const imageMap: Record<string, string> = {
-  'gaming-pc': gamingPcImg,
-  'phone-case': phoneCaseImg,
-  'sneakers': sneakersImg,
-};
+import { imageMap, defaultImg } from '@/lib/imageMap';
+import ReviewSection from '@/components/ReviewSection';
 
 interface Component {
   id: string;
@@ -51,7 +44,6 @@ export default function Configurator() {
   const componentTotal = Object.values(selected).reduce((sum, c) => sum + Number(c.price), 0);
   const totalPrice = basePrice + componentTotal;
 
-  // Simple compatibility check for Gaming PC
   const getCompatibilityWarning = () => {
     if (!product || product.image !== 'gaming-pc') return null;
     const cpu = selected['CPU'];
@@ -93,11 +85,7 @@ export default function Configurator() {
   };
 
   const handleSaveBuild = async () => {
-    if (!user) {
-      toast.error('Please log in to save builds');
-      navigate('/login');
-      return;
-    }
+    if (!user) { toast.error('Please log in to save builds'); navigate('/login'); return; }
     if (!product) return;
     setSaving(true);
     const config: Record<string, { name: string; price: number }> = {};
@@ -112,7 +100,7 @@ export default function Configurator() {
     });
     setSaving(false);
     if (error) toast.error('Failed to save build');
-    else toast.success('Build saved!');
+    else toast.success('Build saved to your dashboard!');
   };
 
   if (loading) {
@@ -154,16 +142,14 @@ export default function Configurator() {
                         key={comp.id}
                         onClick={() => handleSelect(type, comp)}
                         className={`relative p-4 rounded-lg border-2 text-left transition-all ${
-                          isSelected
-                            ? 'border-primary bg-accent'
-                            : 'border-border hover:border-primary/50'
+                          isSelected ? 'border-primary bg-accent' : 'border-border hover:border-primary/50'
                         }`}
                       >
-                        {isSelected && (
-                          <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />
-                        )}
+                        {isSelected && <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />}
                         <p className="font-medium text-sm">{comp.name}</p>
-                        <p className="text-primary font-bold text-sm mt-1">+${Number(comp.price).toFixed(2)}</p>
+                        <p className="text-primary font-bold text-sm mt-1">
+                          {Number(comp.price) === 0 ? 'Included' : `+$${Number(comp.price).toFixed(2)}`}
+                        </p>
                       </button>
                     );
                   })}
@@ -171,13 +157,16 @@ export default function Configurator() {
               </div>
             );
           })}
+
+          {/* Reviews */}
+          <ReviewSection productId={product.id} />
         </div>
 
         {/* Price Panel */}
         <div className="space-y-6">
           <div className="bg-card border rounded-xl p-6 space-y-4 sticky top-20">
             <div className="aspect-video rounded-lg overflow-hidden">
-              <img src={imageMap[product.image] || gamingPcImg} alt={product.name} className="w-full h-full object-cover" />
+              <img src={imageMap[product.image] || defaultImg} alt={product.name} className="w-full h-full object-cover" />
             </div>
 
             <h3 className="font-display text-lg font-semibold">Build Summary</h3>
@@ -196,8 +185,8 @@ export default function Configurator() {
               </div>
               {Object.entries(selected).map(([type, comp]) => (
                 <div key={type} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{type}: {comp.name}</span>
-                  <span>+${Number(comp.price).toFixed(2)}</span>
+                  <span className="text-muted-foreground truncate mr-2">{type}: {comp.name}</span>
+                  <span className="flex-shrink-0">{Number(comp.price) === 0 ? '—' : `+$${Number(comp.price).toFixed(2)}`}</span>
                 </div>
               ))}
               <div className="border-t pt-2 flex justify-between font-bold">
