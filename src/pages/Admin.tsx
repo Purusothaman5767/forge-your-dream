@@ -135,12 +135,17 @@ export default function Admin() {
         ))}
       </div>
 
-      <Tabs defaultValue="products" className="space-y-6">
+      <Tabs defaultValue="analytics" className="space-y-6">
         <TabsList>
+          <TabsTrigger value="analytics">Analytics</TabsTrigger>
           <TabsTrigger value="products">Products</TabsTrigger>
           <TabsTrigger value="components">Components</TabsTrigger>
           <TabsTrigger value="orders">Orders</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="analytics">
+          <AdminAnalytics orders={orders} products={products} />
+        </TabsContent>
 
         <TabsContent value="products" className="space-y-6">
           <form onSubmit={handleAddProduct} className="bg-card border rounded-xl p-6 space-y-4">
