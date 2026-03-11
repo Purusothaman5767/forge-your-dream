@@ -19,6 +19,10 @@ import Checkout from "@/pages/Checkout";
 import Orders from "@/pages/Orders";
 import Wishlist from "@/pages/Wishlist";
 import Admin from "@/pages/Admin";
+import SharedBuild from "@/pages/SharedBuild";
+import CompareBuild from "@/pages/CompareBuild";
+import BudgetBuilder from "@/pages/BudgetBuilder";
+import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,8 +44,12 @@ const App = () => (
                   <Route path="/signup" element={<Signup />} />
                   <Route path="/products" element={<Products />} />
                   <Route path="/configurator/:id" element={<Configurator />} />
+                  <Route path="/build/:buildId" element={<SharedBuild />} />
+                  <Route path="/budget-builder" element={<BudgetBuilder />} />
                   <Route path="/cart" element={<Cart />} />
                   <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                  <Route path="/compare" element={<ProtectedRoute><CompareBuild /></ProtectedRoute>} />
                   <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
                   <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
                   <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />

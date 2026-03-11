@@ -5,9 +5,10 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { ShoppingCart, Save, AlertTriangle, Check } from 'lucide-react';
+import { ShoppingCart, Save, AlertTriangle, Check, Share2, Copy } from 'lucide-react';
 import { imageMap, defaultImg } from '@/lib/imageMap';
 import ReviewSection from '@/components/ReviewSection';
+import ImageUploader from '@/components/ImageUploader';
 
 interface Component {
   id: string;
@@ -26,6 +27,8 @@ export default function Configurator() {
   const [selected, setSelected] = useState<Record<string, Component>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [customImage, setCustomImage] = useState('');
+  const [sharedBuildId, setSharedBuildId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -43,6 +46,8 @@ export default function Configurator() {
   const basePrice = product ? Number(product.base_price) : 0;
   const componentTotal = Object.values(selected).reduce((sum, c) => sum + Number(c.price), 0);
   const totalPrice = basePrice + componentTotal;
+
+  const supportsImageUpload = product && ['phone-case', 't-shirt'].includes(product.image);
 
   const getCompatibilityWarning = () => {
     if (!product || product.image !== 'gaming-pc') return null;
@@ -92,15 +97,28 @@ export default function Configurator() {
     Object.entries(selected).forEach(([type, comp]) => {
       config[type] = { name: comp.name, price: Number(comp.price) };
     });
-    const { error } = await supabase.from('builds').insert({
+    const { data, error } = await supabase.from('builds').insert({
       user_id: user.id,
       product_id: product.id,
       configuration: config,
       total_price: totalPrice,
-    });
+    }).select().single();
     setSaving(false);
     if (error) toast.error('Failed to save build');
-    else toast.success('Build saved to your dashboard!');
+    else {
+      setSharedBuildId(data.id);
+      toast.success('Build saved to your dashboard!');
+    }
+  };
+
+  const handleShareBuild = () => {
+    if (!sharedBuildId) {
+      toast.error('Save the build first to share it');
+      return;
+    }
+    const url = `${window.location.origin}/build/${sharedBuildId}`;
+    navigator.clipboard.writeText(url);
+    toast.success('Share link copied to clipboard!');
   };
 
   if (loading) {
@@ -158,6 +176,13 @@ export default function Configurator() {
             );
           })}
 
+          {/* Image Upload for phone case / t-shirt */}
+          {supportsImageUpload && (
+            <div className="bg-card border rounded-xl p-6">
+              <ImageUploader onUpload={setCustomImage} currentUrl={customImage} />
+            </div>
+          )}
+
           {/* Reviews */}
           <ReviewSection productId={product.id} />
         </div>
@@ -168,6 +193,12 @@ export default function Configurator() {
             <div className="aspect-video rounded-lg overflow-hidden">
               <img src={imageMap[product.image] || defaultImg} alt={product.name} className="w-full h-full object-cover" />
             </div>
+
+            {customImage && (
+              <div className="aspect-square rounded-lg overflow-hidden border max-w-[150px]">
+                <img src={customImage} alt="Your design" className="w-full h-full object-cover" />
+              </div>
+            )}
 
             <h3 className="font-display text-lg font-semibold">Build Summary</h3>
 
@@ -202,6 +233,11 @@ export default function Configurator() {
               <Button variant="outline" className="w-full" onClick={handleSaveBuild} disabled={saving || Object.keys(selected).length === 0}>
                 <Save className="mr-2 h-4 w-4" /> {saving ? 'Saving...' : 'Save Build'}
               </Button>
+              {sharedBuildId && (
+                <Button variant="outline" className="w-full" onClick={handleShareBuild}>
+                  <Share2 className="mr-2 h-4 w-4" /> Share Build
+                </Button>
+              )}
             </div>
           </div>
         </div>
