@@ -11,6 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { toast } from 'sonner';
 import { DollarSign, Package, ShoppingBag, BarChart3, Plus, Trash2 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
+import AdminAnalytics from '@/components/AdminAnalytics';
 
 const CATEGORIES = ['Electronics', 'Gaming', 'Accessories', 'Fashion'];
 
