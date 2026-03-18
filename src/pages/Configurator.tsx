@@ -29,6 +29,8 @@ export default function Configurator() {
   const [saving, setSaving] = useState(false);
   const [customImage, setCustomImage] = useState('');
   const [sharedBuildId, setSharedBuildId] = useState<string | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const [brandStep, setBrandStep] = useState(true); // show brand selector first
 
   useEffect(() => {
     if (!id) return;
