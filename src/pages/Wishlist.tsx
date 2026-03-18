@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import ProductCard from '@/components/ProductCard';
-import { Heart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Heart, Package } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Wishlist() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -32,14 +35,20 @@ export default function Wishlist() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <h1 className="font-display text-3xl font-bold mb-8">My Wishlist</h1>
-        <div className="grid md:grid-cols-3 gap-8">
-          {[1, 2, 3].map(i => (
-            <div key={i} className="bg-card border rounded-xl overflow-hidden animate-pulse">
-              <div className="aspect-square bg-muted" />
-              <div className="p-6 space-y-3">
-                <div className="h-5 bg-muted rounded w-2/3" />
-                <div className="h-4 bg-muted rounded w-full" />
+        <div className="h-9 skeleton-shimmer w-48 mb-2" />
+        <div className="h-5 skeleton-shimmer w-64 mb-8" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="aspect-[4/3] skeleton-shimmer" />
+              <div className="p-5 space-y-3">
+                <div className="h-5 skeleton-shimmer w-2/3" />
+                <div className="h-4 skeleton-shimmer w-full" />
+                <div className="h-4 skeleton-shimmer w-1/2" />
+                <div className="flex justify-between items-center pt-2 border-t border-border">
+                  <div className="h-7 skeleton-shimmer w-16" />
+                  <div className="h-9 skeleton-shimmer w-24" />
+                </div>
               </div>
             </div>
           ))}
@@ -50,13 +59,27 @@ export default function Wishlist() {
 
   return (
     <div className="container mx-auto px-4 py-12 animate-fade-in">
-      <h1 className="font-display text-3xl font-bold mb-2">My Wishlist</h1>
-      <p className="text-muted-foreground mb-8">Products you've saved for later</p>
+      <div className="mb-8">
+        <h1 className="font-display text-3xl font-bold mb-2">My Wishlist</h1>
+        <p className="text-muted-foreground">
+          {products.length} product{products.length !== 1 ? 's' : ''} saved for later
+        </p>
+      </div>
 
       {products.length === 0 ? (
-        <div className="text-center py-16">
-          <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">Your wishlist is empty.</p>
+        <div className="text-center py-20 space-y-6 animate-fade-in">
+          <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto">
+            <Heart className="h-10 w-10 text-muted-foreground" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="font-display text-xl font-semibold">Your wishlist is empty</h2>
+            <p className="text-muted-foreground max-w-sm mx-auto">
+              Save products you love to keep track of them here.
+            </p>
+          </div>
+          <Button onClick={() => navigate('/products')}>
+            <Package className="mr-2 h-4 w-4" /> Browse Products
+          </Button>
         </div>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

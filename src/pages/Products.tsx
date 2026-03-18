@@ -143,28 +143,28 @@ export default function Products() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-12">
-        <div className="h-10 bg-muted rounded-lg w-1/3 mb-2 animate-pulse" />
-        <div className="h-5 bg-muted rounded w-1/4 mb-8 animate-pulse" />
+        <div className="h-10 skeleton-shimmer w-1/3 mb-2" />
+        <div className="h-5 skeleton-shimmer w-1/4 mb-8" />
         <div className="flex gap-4 mb-8">
-          <div className="h-10 bg-muted rounded-lg flex-1 max-w-md animate-pulse" />
-          <div className="h-10 bg-muted rounded-lg w-32 animate-pulse" />
+          <div className="h-10 skeleton-shimmer flex-1 max-w-md" />
+          <div className="h-10 skeleton-shimmer w-32" />
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="bg-card border border-border rounded-xl overflow-hidden animate-pulse">
-              <div className="aspect-[4/3] bg-muted" />
+            <div key={i} className="bg-card border border-border rounded-xl overflow-hidden">
+              <div className="aspect-[4/3] skeleton-shimmer" />
               <div className="p-5 space-y-3">
-                <div className="h-5 bg-muted rounded w-2/3" />
-                <div className="h-4 bg-muted rounded w-full" />
-                <div className="h-3 bg-muted rounded w-1/2" />
+                <div className="h-5 skeleton-shimmer w-2/3" />
+                <div className="h-4 skeleton-shimmer w-full" />
+                <div className="h-3 skeleton-shimmer w-1/2" />
                 <div className="flex gap-1.5">
-                  <div className="h-5 bg-muted rounded w-12" />
-                  <div className="h-5 bg-muted rounded w-12" />
-                  <div className="h-5 bg-muted rounded w-12" />
+                  <div className="h-5 skeleton-shimmer w-12" />
+                  <div className="h-5 skeleton-shimmer w-12" />
+                  <div className="h-5 skeleton-shimmer w-12" />
                 </div>
                 <div className="flex justify-between items-center pt-2 border-t border-border">
-                  <div className="h-7 bg-muted rounded w-16" />
-                  <div className="h-9 bg-muted rounded w-24" />
+                  <div className="h-7 skeleton-shimmer w-16" />
+                  <div className="h-9 skeleton-shimmer w-24" />
                 </div>
               </div>
             </div>

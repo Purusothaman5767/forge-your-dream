@@ -33,7 +33,7 @@ export default function ProductCard({
   const navigate = useNavigate();
 
   return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group flex flex-col">
+    <div className="bg-card border border-border rounded-xl overflow-hidden hover:shadow-xl hover:shadow-primary/8 hover:-translate-y-1.5 transition-all duration-300 ease-out group flex flex-col">
       <div className="aspect-[4/3] overflow-hidden relative">
         <img
           src={imageMap[product.image || ''] || defaultImg}
