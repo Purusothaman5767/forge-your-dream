@@ -5,10 +5,11 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { ShoppingCart, Save, AlertTriangle, Check, Share2, Copy } from 'lucide-react';
+import { ShoppingCart, Save, AlertTriangle, Check, Share2 } from 'lucide-react';
 import { imageMap, defaultImg } from '@/lib/imageMap';
 import ReviewSection from '@/components/ReviewSection';
 import ImageUploader from '@/components/ImageUploader';
+import BrandSelector from '@/components/BrandSelector';
 
 interface Component {
   id: string;
