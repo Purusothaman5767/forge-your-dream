@@ -122,6 +122,35 @@ export type Database = {
           },
         ]
       }
+      product_brands: {
+        Row: {
+          brand_name: string
+          created_at: string
+          id: string
+          product_id: string
+        }
+        Insert: {
+          brand_name: string
+          created_at?: string
+          id?: string
+          product_id: string
+        }
+        Update: {
+          brand_name?: string
+          created_at?: string
+          id?: string
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_brands_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           base_price: number

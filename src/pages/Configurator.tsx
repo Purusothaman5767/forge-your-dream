@@ -5,10 +5,11 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { ShoppingCart, Save, AlertTriangle, Check, Share2, Copy } from 'lucide-react';
+import { ShoppingCart, Save, AlertTriangle, Check, Share2 } from 'lucide-react';
 import { imageMap, defaultImg } from '@/lib/imageMap';
 import ReviewSection from '@/components/ReviewSection';
 import ImageUploader from '@/components/ImageUploader';
+import BrandSelector from '@/components/BrandSelector';
 
 interface Component {
   id: string;
@@ -29,6 +30,8 @@ export default function Configurator() {
   const [saving, setSaving] = useState(false);
   const [customImage, setCustomImage] = useState('');
   const [sharedBuildId, setSharedBuildId] = useState<string | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
+  const [brandStep, setBrandStep] = useState(true); // show brand selector first
 
   useEffect(() => {
     if (!id) return;
@@ -139,9 +142,26 @@ export default function Configurator() {
     return <div className="container mx-auto px-4 py-12 text-center"><p>Product not found.</p></div>;
   }
 
+  // Brand selection step
+  if (brandStep) {
+    return (
+      <BrandSelector
+        productId={product.id}
+        productName={product.name}
+        onSelect={(brand) => {
+          setSelectedBrand(brand);
+          setBrandStep(false);
+        }}
+        onSkip={() => setBrandStep(false)}
+      />
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-12 animate-fade-in">
-      <h1 className="font-display text-3xl font-bold mb-2">Configure: {product.name}</h1>
+      <h1 className="font-display text-3xl font-bold mb-2">
+        Configure: {product.name}{selectedBrand ? ` (${selectedBrand})` : ''}
+      </h1>
       <p className="text-muted-foreground mb-8">Select your components</p>
 
       <div className="grid lg:grid-cols-3 gap-8">
