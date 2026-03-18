@@ -142,9 +142,26 @@ export default function Configurator() {
     return <div className="container mx-auto px-4 py-12 text-center"><p>Product not found.</p></div>;
   }
 
+  // Brand selection step
+  if (brandStep) {
+    return (
+      <BrandSelector
+        productId={product.id}
+        productName={product.name}
+        onSelect={(brand) => {
+          setSelectedBrand(brand);
+          setBrandStep(false);
+        }}
+        onSkip={() => setBrandStep(false)}
+      />
+    );
+  }
+
   return (
     <div className="container mx-auto px-4 py-12 animate-fade-in">
-      <h1 className="font-display text-3xl font-bold mb-2">Configure: {product.name}</h1>
+      <h1 className="font-display text-3xl font-bold mb-2">
+        Configure: {product.name}{selectedBrand ? ` (${selectedBrand})` : ''}
+      </h1>
       <p className="text-muted-foreground mb-8">Select your components</p>
 
       <div className="grid lg:grid-cols-3 gap-8">
