@@ -82,8 +82,8 @@ export default function ProductCard({
       </div>
 
       <div className="p-5 space-y-3 flex-1 flex flex-col">
-        <h3 className="font-display text-lg font-semibold leading-tight">{product.name}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-2 flex-1">{product.description}</p>
+        <h3 className="font-display text-lg font-bold leading-tight tracking-tight">{product.name}</h3>
+        <p className="text-[13px] text-muted-foreground leading-relaxed line-clamp-2 flex-1">{product.description}</p>
 
         {/* Brands */}
         {brands && brands.length > 0 && (
