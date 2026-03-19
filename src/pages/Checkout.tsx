@@ -49,7 +49,8 @@ export default function Checkout() {
         shipping_address: address,
         phone,
         status: 'confirmed',
-      });
+        brand: item.brand || null,
+      } as any);
     }
 
     clearCart();

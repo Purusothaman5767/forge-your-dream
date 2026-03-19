@@ -40,7 +40,10 @@ export default function Orders() {
             <div key={order.id} className="bg-card border rounded-xl p-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
                 <div>
-                  <p className="font-display font-semibold">{order.builds?.products?.name || 'Custom Product'}</p>
+                  <p className="font-display font-semibold">
+                    {order.builds?.products?.name || 'Custom Product'}
+                    {order.brand && <span className="text-primary font-semibold"> — {order.brand}</span>}
+                  </p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                   </p>
