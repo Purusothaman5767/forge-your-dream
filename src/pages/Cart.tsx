@@ -45,7 +45,9 @@ export default function Cart() {
                 <img src={imageMap[item.image || ''] || defaultImg} alt={item.productName} className="w-full h-full object-cover" />
               </div>
               <div className="flex-1 space-y-2">
-                <h3 className="font-display font-semibold text-lg">{item.productName}</h3>
+                <h3 className="font-display font-semibold text-lg">
+                  {item.productName}{item.brand ? ` — ${item.brand}` : ''}
+                </h3>
                 <div className="text-xs text-muted-foreground space-y-0.5">
                   {Object.entries(item.configuration).map(([type, comp]) => (
                     <p key={type} className="flex justify-between max-w-xs">

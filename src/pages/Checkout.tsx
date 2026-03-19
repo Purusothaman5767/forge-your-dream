@@ -39,7 +39,8 @@ export default function Checkout() {
         product_id: item.productId,
         configuration: config,
         total_price: item.totalPrice * item.quantity,
-      }).select().single();
+        brand: item.brand || null,
+      } as any).select().single();
 
       await supabase.from('orders').insert({
         user_id: user.id,
@@ -48,7 +49,8 @@ export default function Checkout() {
         shipping_address: address,
         phone,
         status: 'confirmed',
-      });
+        brand: item.brand || null,
+      } as any);
     }
 
     clearCart();
