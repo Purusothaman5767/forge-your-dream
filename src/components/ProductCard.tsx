@@ -87,20 +87,23 @@ export default function ProductCard({
 
         {/* Brands */}
         {brands && brands.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {brands.slice(0, 4).map((b) => (
-              <span
-                key={b}
-                className="text-[11px] px-2 py-0.5 rounded-md bg-muted text-muted-foreground font-medium"
-              >
-                {b}
-              </span>
-            ))}
-            {brands.length > 4 && (
-              <span className="text-[11px] px-2 py-0.5 rounded-md bg-muted text-muted-foreground font-medium">
-                +{brands.length - 4}
-              </span>
-            )}
+          <div className="space-y-1">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Available Brands</p>
+            <div className="flex flex-wrap gap-1.5">
+              {brands.slice(0, 4).map((b) => (
+                <span
+                  key={b}
+                  className="text-[11px] px-2.5 py-1 rounded-full bg-accent text-accent-foreground font-medium border border-border/50"
+                >
+                  {b}
+                </span>
+              ))}
+              {brands.length > 4 && (
+                <span className="text-[11px] px-2.5 py-1 rounded-full bg-muted text-muted-foreground font-medium">
+                  +{brands.length - 4} more
+                </span>
+              )}
+            </div>
           </div>
         )}
 
