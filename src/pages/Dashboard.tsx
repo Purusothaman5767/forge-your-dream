@@ -28,14 +28,15 @@ export default function Dashboard() {
 
   return (
     <div className="container mx-auto px-4 py-12 space-y-8 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-bold">
-            Welcome{profile?.name ? `, ${profile.name}` : ''}!
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="space-y-1">
+          <p className="text-sm font-medium text-muted-foreground tracking-wide uppercase">Dashboard</p>
+          <h1 className="font-display text-3xl md:text-4xl font-bold">
+            Welcome back{profile?.name ? `, ${profile.name}` : ''}
           </h1>
-          <p className="text-muted-foreground">Manage your builds and orders</p>
+          <p className="text-muted-foreground">Here's an overview of your builds and recent orders.</p>
         </div>
-        <Button onClick={() => navigate('/products')}>
+        <Button size="lg" onClick={() => navigate('/products')} className="shadow-lg shadow-primary/20">
           <Wrench className="mr-2 h-4 w-4" /> Start Customizing
         </Button>
       </div>

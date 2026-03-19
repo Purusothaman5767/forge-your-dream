@@ -256,21 +256,26 @@ export default function Products() {
 
       {/* Products */}
       {filtered.length === 0 ? (
-        <div className="text-center py-20 space-y-4">
-          <Package className="h-16 w-16 text-muted-foreground/40 mx-auto" />
-          <h2 className="font-display text-xl font-semibold">No products found</h2>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Try adjusting your filters or search terms to find what you're looking for.
-          </p>
+        <div className="text-center py-24 space-y-6 animate-fade-in">
+          <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto">
+            <Search className="h-10 w-10 text-muted-foreground" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="font-display text-2xl font-bold">No products found</h2>
+            <p className="text-muted-foreground max-w-sm mx-auto">
+              We couldn't find anything matching your criteria. Try broadening your search or clearing filters.
+            </p>
+          </div>
           <Button
             variant="outline"
+            size="lg"
             onClick={() => {
               setSearch('');
               setCategory('All');
               setPriceRange([0, maxPrice]);
             }}
           >
-            Clear all filters
+            <Package className="mr-2 h-4 w-4" /> Clear all filters
           </Button>
         </div>
       ) : showGrouped ? (

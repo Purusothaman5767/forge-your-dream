@@ -82,25 +82,28 @@ export default function ProductCard({
       </div>
 
       <div className="p-5 space-y-3 flex-1 flex flex-col">
-        <h3 className="font-display text-lg font-semibold leading-tight">{product.name}</h3>
-        <p className="text-sm text-muted-foreground line-clamp-2 flex-1">{product.description}</p>
+        <h3 className="font-display text-lg font-bold leading-tight tracking-tight">{product.name}</h3>
+        <p className="text-[13px] text-muted-foreground leading-relaxed line-clamp-2 flex-1">{product.description}</p>
 
         {/* Brands */}
         {brands && brands.length > 0 && (
-          <div className="flex flex-wrap gap-1.5">
-            {brands.slice(0, 4).map((b) => (
-              <span
-                key={b}
-                className="text-[11px] px-2 py-0.5 rounded-md bg-muted text-muted-foreground font-medium"
-              >
-                {b}
-              </span>
-            ))}
-            {brands.length > 4 && (
-              <span className="text-[11px] px-2 py-0.5 rounded-md bg-muted text-muted-foreground font-medium">
-                +{brands.length - 4}
-              </span>
-            )}
+          <div className="space-y-1">
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Available Brands</p>
+            <div className="flex flex-wrap gap-1.5">
+              {brands.slice(0, 4).map((b) => (
+                <span
+                  key={b}
+                  className="text-[11px] px-2.5 py-1 rounded-full bg-accent text-accent-foreground font-medium border border-border/50"
+                >
+                  {b}
+                </span>
+              ))}
+              {brands.length > 4 && (
+                <span className="text-[11px] px-2.5 py-1 rounded-full bg-muted text-muted-foreground font-medium">
+                  +{brands.length - 4} more
+                </span>
+              )}
+            </div>
           </div>
         )}
 
@@ -124,14 +127,14 @@ export default function ProductCard({
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-2 border-t border-border">
+        <div className="flex items-center justify-between pt-3 mt-auto border-t border-border">
           <div>
-            <p className="text-xs text-muted-foreground">Starting at</p>
-            <p className="text-primary font-bold text-xl">${Number(product.base_price).toFixed(2)}</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">From</p>
+            <p className="text-primary font-bold text-xl tracking-tight">${Number(product.base_price).toFixed(2)}</p>
           </div>
           <Button
             size="sm"
-            className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
+            className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all"
             onClick={() => navigate(`/configurator/${product.id}`)}
           >
             <Wrench className="mr-1.5 h-3.5 w-3.5" /> Customize
