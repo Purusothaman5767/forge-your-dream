@@ -127,14 +127,14 @@ export default function ProductCard({
           </div>
         )}
 
-        <div className="flex items-center justify-between pt-2 border-t border-border">
+        <div className="flex items-center justify-between pt-3 mt-auto border-t border-border">
           <div>
-            <p className="text-xs text-muted-foreground">Starting at</p>
-            <p className="text-primary font-bold text-xl">${Number(product.base_price).toFixed(2)}</p>
+            <p className="text-[11px] text-muted-foreground uppercase tracking-wider font-medium">From</p>
+            <p className="text-primary font-bold text-xl tracking-tight">${Number(product.base_price).toFixed(2)}</p>
           </div>
           <Button
             size="sm"
-            className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-shadow"
+            className="shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all"
             onClick={() => navigate(`/configurator/${product.id}`)}
           >
             <Wrench className="mr-1.5 h-3.5 w-3.5" /> Customize
