@@ -52,6 +52,9 @@ export default function Dashboard() {
               <GitCompareArrows className="mr-2 h-4 w-4" /> Compare Builds
             </Button>
           )}
+          <Button variant="outline" size="lg" onClick={() => navigate('/budget-builder')}>
+            <Wand2 className="mr-2 h-4 w-4" /> Budget Builder
+          </Button>
           <Button size="lg" onClick={() => navigate('/products')} className="shadow-lg shadow-primary/20">
             <Wrench className="mr-2 h-4 w-4" /> Start Customizing
           </Button>
