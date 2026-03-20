@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Package, ShoppingBag, Wrench } from 'lucide-react';
+import { Package, ShoppingBag, Wrench, Share2, GitCompareArrows, Copy, Check } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function Dashboard() {
   const { profile, user } = useAuth();
@@ -11,6 +12,15 @@ export default function Dashboard() {
   const [builds, setBuilds] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleShare = (buildId: string) => {
+    const url = `${window.location.origin}/build/${buildId}`;
+    navigator.clipboard.writeText(url);
+    setCopiedId(buildId);
+    toast.success('Build link copied!');
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -36,9 +46,16 @@ export default function Dashboard() {
           </h1>
           <p className="text-muted-foreground">Here's an overview of your builds and recent orders.</p>
         </div>
-        <Button size="lg" onClick={() => navigate('/products')} className="shadow-lg shadow-primary/20">
-          <Wrench className="mr-2 h-4 w-4" /> Start Customizing
-        </Button>
+        <div className="flex gap-3">
+          {builds.length >= 2 && (
+            <Button variant="outline" size="lg" onClick={() => navigate('/compare')}>
+              <GitCompareArrows className="mr-2 h-4 w-4" /> Compare Builds
+            </Button>
+          )}
+          <Button size="lg" onClick={() => navigate('/products')} className="shadow-lg shadow-primary/20">
+            <Wrench className="mr-2 h-4 w-4" /> Start Customizing
+          </Button>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
@@ -60,9 +77,14 @@ export default function Dashboard() {
                 <div key={b.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <div>
                     <p className="font-medium text-sm">{b.products?.name || 'Product'}</p>
-                    <p className="text-xs text-muted-foreground">{new Date(b.created_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(b.created_at).toLocaleDateString()}{b.brand ? ` · ${b.brand}` : ''}</p>
                   </div>
-                  <p className="font-bold text-sm">${Number(b.total_price).toFixed(2)}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-bold text-sm">${Number(b.total_price).toFixed(2)}</p>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleShare(b.id)}>
+                      {copiedId === b.id ? <Check className="h-3.5 w-3.5 text-primary" /> : <Share2 className="h-3.5 w-3.5" />}
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
