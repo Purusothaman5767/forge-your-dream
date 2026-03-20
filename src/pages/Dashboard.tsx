@@ -46,9 +46,16 @@ export default function Dashboard() {
           </h1>
           <p className="text-muted-foreground">Here's an overview of your builds and recent orders.</p>
         </div>
-        <Button size="lg" onClick={() => navigate('/products')} className="shadow-lg shadow-primary/20">
-          <Wrench className="mr-2 h-4 w-4" /> Start Customizing
-        </Button>
+        <div className="flex gap-3">
+          {builds.length >= 2 && (
+            <Button variant="outline" size="lg" onClick={() => navigate('/compare')}>
+              <GitCompareArrows className="mr-2 h-4 w-4" /> Compare Builds
+            </Button>
+          )}
+          <Button size="lg" onClick={() => navigate('/products')} className="shadow-lg shadow-primary/20">
+            <Wrench className="mr-2 h-4 w-4" /> Start Customizing
+          </Button>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
