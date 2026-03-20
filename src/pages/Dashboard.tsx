@@ -82,7 +82,7 @@ export default function Dashboard() {
                   <div className="flex items-center gap-2">
                     <p className="font-bold text-sm">${Number(b.total_price).toFixed(2)}</p>
                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleShare(b.id)}>
-                      {copiedId === b.id ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Share2 className="h-3.5 w-3.5" />}
+                      {copiedId === b.id ? <Check className="h-3.5 w-3.5 text-primary" /> : <Share2 className="h-3.5 w-3.5" />}
                     </Button>
                   </div>
                 </div>
