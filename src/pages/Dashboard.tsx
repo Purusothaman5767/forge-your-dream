@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Package, ShoppingBag, Wrench, Share2, GitCompareArrows, Copy, Check } from 'lucide-react';
+import { Package, ShoppingBag, Wrench, Share2, GitCompareArrows, Copy, Check, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Dashboard() {
