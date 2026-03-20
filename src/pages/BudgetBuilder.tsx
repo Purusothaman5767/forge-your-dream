@@ -129,8 +129,8 @@ export default function BudgetBuilder() {
             <Input type="number" placeholder="e.g. 1200" value={budget} onChange={e => { setBudget(e.target.value); setSuggestion(null); }} />
           </div>
         </div>
-        <Button onClick={handleSuggest} className="w-full">
-          <Wand2 className="mr-2 h-4 w-4" /> Suggest Configuration
+        <Button onClick={handleSuggest} className="w-full" size="lg">
+          <Wand2 className="mr-2 h-4 w-4" /> Optimize Build
         </Button>
       </div>
 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Package, ShoppingBag, Wrench, Share2, GitCompareArrows, Copy, Check } from 'lucide-react';
+import { Package, ShoppingBag, Wrench, Share2, GitCompareArrows, Copy, Check, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Dashboard() {
@@ -52,6 +52,9 @@ export default function Dashboard() {
               <GitCompareArrows className="mr-2 h-4 w-4" /> Compare Builds
             </Button>
           )}
+          <Button variant="outline" size="lg" onClick={() => navigate('/budget-builder')}>
+            <Wand2 className="mr-2 h-4 w-4" /> Budget Builder
+          </Button>
           <Button size="lg" onClick={() => navigate('/products')} className="shadow-lg shadow-primary/20">
             <Wrench className="mr-2 h-4 w-4" /> Start Customizing
           </Button>
