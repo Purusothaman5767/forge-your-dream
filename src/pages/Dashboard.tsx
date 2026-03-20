@@ -12,6 +12,15 @@ export default function Dashboard() {
   const [builds, setBuilds] = useState<any[]>([]);
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  const handleShare = (buildId: string) => {
+    const url = `${window.location.origin}/build/${buildId}`;
+    navigator.clipboard.writeText(url);
+    setCopiedId(buildId);
+    toast.success('Build link copied!');
+    setTimeout(() => setCopiedId(null), 2000);
+  };
 
   useEffect(() => {
     if (!user) return;
