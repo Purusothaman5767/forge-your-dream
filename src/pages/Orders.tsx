@@ -1,7 +1,48 @@
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, Package, Truck, CheckCircle2, Clock } from 'lucide-react';
+
+const STEPS = [
+  { key: 'pending', label: 'Pending', icon: Clock },
+  { key: 'processing', label: 'Processing', icon: Package },
+  { key: 'shipped', label: 'Shipped', icon: Truck },
+  { key: 'delivered', label: 'Delivered', icon: CheckCircle2 },
+];
+
+function OrderProgress({ status }: { status: string }) {
+  const currentIdx = STEPS.findIndex(s => s.key === status);
+  const activeIdx = currentIdx === -1 ? 0 : currentIdx;
+
+  return (
+    <div className="flex items-center gap-0 w-full mt-4">
+      {STEPS.map((step, i) => {
+        const Icon = step.icon;
+        const done = i <= activeIdx;
+        const isLast = i === STEPS.length - 1;
+        return (
+          <div key={step.key} className="flex items-center flex-1 last:flex-none">
+            <div className="flex flex-col items-center gap-1">
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${
+                done ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+              }`}>
+                <Icon className="h-4 w-4" />
+              </div>
+              <span className={`text-[10px] font-medium ${done ? 'text-foreground' : 'text-muted-foreground'}`}>
+                {step.label}
+              </span>
+            </div>
+            {!isLast && (
+              <div className={`h-0.5 flex-1 mx-1 rounded-full transition-colors ${
+                i < activeIdx ? 'bg-primary' : 'bg-muted'
+              }`} />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
 export default function Orders() {
   const { user } = useAuth();
@@ -27,7 +68,7 @@ export default function Orders() {
 
       {loading ? (
         <div className="space-y-4">
-          {[1, 2, 3].map(i => <div key={i} className="h-24 bg-muted rounded-xl animate-pulse" />)}
+          {[1, 2, 3].map(i => <div key={i} className="h-32 bg-muted rounded-xl animate-pulse" />)}
         </div>
       ) : orders.length === 0 ? (
         <div className="text-center py-16">
@@ -38,7 +79,7 @@ export default function Orders() {
         <div className="space-y-4">
           {orders.map(order => (
             <div key={order.id} className="bg-card border rounded-xl p-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <p className="font-display font-semibold">
                     {order.builds?.products?.name || 'Custom Product'}
@@ -48,15 +89,13 @@ export default function Orders() {
                     {new Date(order.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                   </p>
                 </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs px-3 py-1 rounded-full bg-accent text-accent-foreground capitalize font-medium">
-                    {order.status}
-                  </span>
-                  <span className="font-bold text-primary">${Number(order.total_price).toFixed(2)}</span>
-                </div>
+                <span className="font-bold text-primary text-lg">${Number(order.total_price).toFixed(2)}</span>
               </div>
+
+              <OrderProgress status={order.status} />
+
               {order.builds?.configuration && (
-                <div className="text-xs text-muted-foreground flex flex-wrap gap-2">
+                <div className="text-xs text-muted-foreground flex flex-wrap gap-2 mt-4">
                   {Object.entries(order.builds.configuration as Record<string, { name: string }>).map(([type, comp]) => (
                     <span key={type} className="bg-muted px-2 py-1 rounded">{type}: {comp.name}</span>
                   ))}
