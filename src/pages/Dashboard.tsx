@@ -77,9 +77,14 @@ export default function Dashboard() {
                 <div key={b.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
                   <div>
                     <p className="font-medium text-sm">{b.products?.name || 'Product'}</p>
-                    <p className="text-xs text-muted-foreground">{new Date(b.created_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-muted-foreground">{new Date(b.created_at).toLocaleDateString()}{b.brand ? ` · ${b.brand}` : ''}</p>
                   </div>
-                  <p className="font-bold text-sm">${Number(b.total_price).toFixed(2)}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-bold text-sm">${Number(b.total_price).toFixed(2)}</p>
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleShare(b.id)}>
+                      {copiedId === b.id ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Share2 className="h-3.5 w-3.5" />}
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
