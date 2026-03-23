@@ -1,5 +1,6 @@
 import { imageMap, defaultImg } from '@/lib/imageMap';
-import { Cpu, MemoryStick, HardDrive, Monitor, Palette, Keyboard, Wifi, Battery, Shirt, Smartphone, type LucideIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ShoppingCart, Cpu, MemoryStick, HardDrive, Monitor, Palette, Keyboard, Wifi, Battery, Shirt, Smartphone, type LucideIcon } from 'lucide-react';
 
 interface ConfiguratorPreviewProps {
   product: any;
@@ -8,6 +9,9 @@ interface ConfiguratorPreviewProps {
   customImage?: string;
   basePrice: number;
   totalPrice: number;
+  onAddToCart?: () => void;
+  onBuyNow?: () => void;
+  hasSelection?: boolean;
 }
 
 const colorVariants: Record<string, string> = {
@@ -51,6 +55,9 @@ export default function ConfiguratorPreview({
   customImage,
   basePrice,
   totalPrice,
+  onAddToCart,
+  onBuyNow,
+  hasSelection = false,
 }: ConfiguratorPreviewProps) {
   const selectedColor = selected['Color']?.name;
   const colorClass = selectedColor ? colorVariants[selectedColor] : null;
@@ -160,6 +167,20 @@ export default function ConfiguratorPreview({
           <span className="text-primary text-lg">${totalPrice.toFixed(2)}</span>
         </div>
       </div>
+
+      {/* Action Buttons */}
+      {onAddToCart && (
+        <div className="space-y-2 pt-2">
+          <Button className="w-full" size="lg" onClick={onAddToCart} disabled={!hasSelection}>
+            <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
+          </Button>
+          {onBuyNow && (
+            <Button className="w-full" variant="secondary" size="lg" onClick={onBuyNow} disabled={!hasSelection}>
+              Buy Now
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

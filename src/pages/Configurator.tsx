@@ -5,7 +5,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { ShoppingCart, Save, AlertTriangle, Check, Share2 } from 'lucide-react';
+import { Save, AlertTriangle, Check, Share2 } from 'lucide-react';
 import ReviewSection from '@/components/ReviewSection';
 import ImageUploader from '@/components/ImageUploader';
 import BrandSelector from '@/components/BrandSelector';
@@ -245,15 +245,12 @@ export default function Configurator() {
             customImage={customImage}
             basePrice={basePrice}
             totalPrice={totalPrice}
+            onAddToCart={handleAddToCart}
+            onBuyNow={handleBuyNow}
+            hasSelection={Object.keys(selected).length > 0}
           />
 
           <div className="space-y-2">
-            <Button className="w-full" size="lg" onClick={handleAddToCart} disabled={Object.keys(selected).length === 0}>
-              <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
-            </Button>
-            <Button className="w-full" variant="secondary" size="lg" onClick={handleBuyNow} disabled={Object.keys(selected).length === 0}>
-              Buy Now
-            </Button>
             <Button variant="outline" className="w-full" onClick={handleSaveBuild} disabled={saving || Object.keys(selected).length === 0}>
               <Save className="mr-2 h-4 w-4" /> {saving ? 'Saving...' : 'Save Build'}
             </Button>
