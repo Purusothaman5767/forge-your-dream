@@ -167,6 +167,20 @@ export default function ConfiguratorPreview({
           <span className="text-primary text-lg">${totalPrice.toFixed(2)}</span>
         </div>
       </div>
+
+      {/* Action Buttons */}
+      {onAddToCart && (
+        <div className="space-y-2 pt-2">
+          <Button className="w-full" size="lg" onClick={onAddToCart} disabled={!hasSelection}>
+            <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
+          </Button>
+          {onBuyNow && (
+            <Button className="w-full" variant="secondary" size="lg" onClick={onBuyNow} disabled={!hasSelection}>
+              Buy Now
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
