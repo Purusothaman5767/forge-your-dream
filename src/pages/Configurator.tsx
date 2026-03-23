@@ -93,6 +93,29 @@ export default function Configurator() {
     navigate('/cart');
   };
 
+  const handleBuyNow = () => {
+    if (!product) return;
+    const config: Record<string, { name: string; price: number }> = {};
+    Object.entries(selected).forEach(([type, comp]) => {
+      config[type] = { name: comp.name, price: Number(comp.price) };
+    });
+    addItem({
+      productId: product.id,
+      productName: product.name,
+      basePrice,
+      configuration: config,
+      totalPrice,
+      image: product.image,
+      brand: selectedBrand || undefined,
+    });
+    toast.success('Added to cart!');
+    if (user) {
+      navigate('/checkout');
+    } else {
+      navigate('/login');
+    }
+  };
+
   const handleSaveBuild = async () => {
     if (!user) { toast.error('Please log in to save builds'); navigate('/login'); return; }
     if (!product) return;
@@ -225,8 +248,11 @@ export default function Configurator() {
           />
 
           <div className="space-y-2">
-            <Button className="w-full" onClick={handleAddToCart} disabled={Object.keys(selected).length === 0}>
+            <Button className="w-full" size="lg" onClick={handleAddToCart} disabled={Object.keys(selected).length === 0}>
               <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
+            </Button>
+            <Button className="w-full" variant="secondary" size="lg" onClick={handleBuyNow} disabled={Object.keys(selected).length === 0}>
+              Buy Now
             </Button>
             <Button variant="outline" className="w-full" onClick={handleSaveBuild} disabled={saving || Object.keys(selected).length === 0}>
               <Save className="mr-2 h-4 w-4" /> {saving ? 'Saving...' : 'Save Build'}
