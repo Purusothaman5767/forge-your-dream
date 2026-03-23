@@ -93,6 +93,29 @@ export default function Configurator() {
     navigate('/cart');
   };
 
+  const handleBuyNow = () => {
+    if (!product) return;
+    const config: Record<string, { name: string; price: number }> = {};
+    Object.entries(selected).forEach(([type, comp]) => {
+      config[type] = { name: comp.name, price: Number(comp.price) };
+    });
+    addItem({
+      productId: product.id,
+      productName: product.name,
+      basePrice,
+      configuration: config,
+      totalPrice,
+      image: product.image,
+      brand: selectedBrand || undefined,
+    });
+    toast.success('Added to cart!');
+    if (user) {
+      navigate('/checkout');
+    } else {
+      navigate('/login');
+    }
+  };
+
   const handleSaveBuild = async () => {
     if (!user) { toast.error('Please log in to save builds'); navigate('/login'); return; }
     if (!product) return;
