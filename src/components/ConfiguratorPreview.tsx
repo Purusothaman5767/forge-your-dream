@@ -1,5 +1,6 @@
 import { imageMap, defaultImg } from '@/lib/imageMap';
-import { Cpu, MemoryStick, HardDrive, Monitor, Palette, Keyboard, Wifi, Battery, Shirt, Smartphone, type LucideIcon } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ShoppingCart, Cpu, MemoryStick, HardDrive, Monitor, Palette, Keyboard, Wifi, Battery, Shirt, Smartphone, type LucideIcon } from 'lucide-react';
 
 interface ConfiguratorPreviewProps {
   product: any;
@@ -8,6 +9,9 @@ interface ConfiguratorPreviewProps {
   customImage?: string;
   basePrice: number;
   totalPrice: number;
+  onAddToCart?: () => void;
+  onBuyNow?: () => void;
+  hasSelection?: boolean;
 }
 
 const colorVariants: Record<string, string> = {
