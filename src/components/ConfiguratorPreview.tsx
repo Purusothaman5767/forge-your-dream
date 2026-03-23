@@ -55,6 +55,9 @@ export default function ConfiguratorPreview({
   customImage,
   basePrice,
   totalPrice,
+  onAddToCart,
+  onBuyNow,
+  hasSelection = false,
 }: ConfiguratorPreviewProps) {
   const selectedColor = selected['Color']?.name;
   const colorClass = selectedColor ? colorVariants[selectedColor] : null;
