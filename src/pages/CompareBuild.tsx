@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { GitCompareArrows } from 'lucide-react';
+import { formatPrice } from '@/lib/currency';
 
 export default function CompareBuild() {
   const { user } = useAuth();
@@ -37,13 +38,9 @@ export default function CompareBuild() {
       <p className="text-muted-foreground mb-8">Select two saved builds to compare side by side</p>
 
       {loading ? (
-        <div className="space-y-4">
-          {[1, 2].map(i => <div key={i} className="h-12 bg-muted rounded animate-pulse" />)}
-        </div>
+        <div className="space-y-4">{[1, 2].map(i => <div key={i} className="h-12 bg-muted rounded animate-pulse" />)}</div>
       ) : builds.length < 2 ? (
-        <div className="text-center py-16">
-          <p className="text-muted-foreground">You need at least 2 saved builds to compare.</p>
-        </div>
+        <div className="text-center py-16"><p className="text-muted-foreground">You need at least 2 saved builds to compare.</p></div>
       ) : (
         <div className="space-y-6">
           <div className="grid sm:grid-cols-2 gap-4">
@@ -54,7 +51,7 @@ export default function CompareBuild() {
                 <SelectContent>
                   {builds.map(b => (
                     <SelectItem key={b.id} value={b.id} disabled={b.id === buildB}>
-                      {b.products?.name} — ${Number(b.total_price).toFixed(2)}
+                      {b.products?.name} — {formatPrice(Number(b.total_price))}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -67,7 +64,7 @@ export default function CompareBuild() {
                 <SelectContent>
                   {builds.map(b => (
                     <SelectItem key={b.id} value={b.id} disabled={b.id === buildA}>
-                      {b.products?.name} — ${Number(b.total_price).toFixed(2)}
+                      {b.products?.name} — {formatPrice(Number(b.total_price))}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -96,20 +93,20 @@ export default function CompareBuild() {
                       <TableCell className="font-medium">{type}</TableCell>
                       <TableCell>
                         {configA[type] ? (
-                          <span>{configA[type].name} <span className="text-muted-foreground text-xs">(+${Number(configA[type].price).toFixed(2)})</span></span>
+                          <span>{configA[type].name} <span className="text-muted-foreground text-xs">(+{formatPrice(Number(configA[type].price))})</span></span>
                         ) : <span className="text-muted-foreground">—</span>}
                       </TableCell>
                       <TableCell>
                         {configB[type] ? (
-                          <span>{configB[type].name} <span className="text-muted-foreground text-xs">(+${Number(configB[type].price).toFixed(2)})</span></span>
+                          <span>{configB[type].name} <span className="text-muted-foreground text-xs">(+{formatPrice(Number(configB[type].price))})</span></span>
                         ) : <span className="text-muted-foreground">—</span>}
                       </TableCell>
                     </TableRow>
                   ))}
                   <TableRow className="font-bold">
                     <TableCell>Total Price</TableCell>
-                    <TableCell className="text-primary">${Number(a.total_price).toFixed(2)}</TableCell>
-                    <TableCell className="text-primary">${Number(b.total_price).toFixed(2)}</TableCell>
+                    <TableCell className="text-primary">{formatPrice(Number(a.total_price))}</TableCell>
+                    <TableCell className="text-primary">{formatPrice(Number(b.total_price))}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>

@@ -4,6 +4,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Trash2, Plus, Minus, ShoppingBag, ArrowRight, Package } from 'lucide-react';
 import { imageMap, defaultImg } from '@/lib/imageMap';
+import { formatPrice } from '@/lib/currency';
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, total } = useCart();
@@ -19,9 +20,7 @@ export default function Cart() {
           </div>
           <div className="space-y-2">
             <h1 className="font-display text-2xl font-bold">Your cart is empty</h1>
-            <p className="text-muted-foreground">
-              Browse our customizable products and build something unique.
-            </p>
+            <p className="text-muted-foreground">Browse our customizable products and build something unique.</p>
           </div>
           <Button size="lg" onClick={() => navigate('/products')}>
             <Package className="mr-2 h-4 w-4" /> Browse Products
@@ -52,11 +51,11 @@ export default function Cart() {
                   {Object.entries(item.configuration).map(([type, comp]) => (
                     <p key={type} className="flex justify-between max-w-xs">
                       <span className="font-medium">{type}</span>
-                      <span>{comp.name} (+${comp.price.toFixed(2)})</span>
+                      <span>{comp.name} (+{formatPrice(comp.price)})</span>
                     </p>
                   ))}
                 </div>
-                <p className="text-primary font-bold text-lg">${item.totalPrice.toFixed(2)}</p>
+                <p className="text-primary font-bold text-lg">{formatPrice(item.totalPrice)}</p>
               </div>
               <div className="flex sm:flex-col items-center gap-2">
                 <div className="flex items-center gap-1 bg-muted rounded-lg p-1">
@@ -76,14 +75,13 @@ export default function Cart() {
           ))}
         </div>
 
-        {/* Summary */}
         <div className="lg:col-span-1">
           <div className="bg-card border border-border rounded-xl p-6 space-y-5 sticky top-24">
             <h2 className="font-display text-xl font-semibold">Order Summary</h2>
             <div className="space-y-3 text-sm">
               <div className="flex justify-between text-muted-foreground">
                 <span>Subtotal</span>
-                <span>${total.toFixed(2)}</span>
+                <span>{formatPrice(total)}</span>
               </div>
               <div className="flex justify-between text-muted-foreground">
                 <span>Shipping</span>
@@ -91,7 +89,7 @@ export default function Cart() {
               </div>
               <div className="border-t border-border pt-3 flex justify-between font-bold text-lg">
                 <span>Total</span>
-                <span className="text-primary">${total.toFixed(2)}</span>
+                <span className="text-primary">{formatPrice(total)}</span>
               </div>
             </div>
             {user ? (
@@ -100,12 +98,8 @@ export default function Cart() {
               </Button>
             ) : (
               <div className="space-y-3">
-                <Button className="w-full" size="lg" onClick={() => navigate('/login')}>
-                  Log in to Checkout
-                </Button>
-                <p className="text-xs text-muted-foreground text-center">
-                  You need an account to place an order
-                </p>
+                <Button className="w-full" size="lg" onClick={() => navigate('/login')}>Log in to Checkout</Button>
+                <p className="text-xs text-muted-foreground text-center">You need an account to place an order</p>
               </div>
             )}
           </div>
