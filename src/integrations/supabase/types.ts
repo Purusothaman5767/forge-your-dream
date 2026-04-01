@@ -157,11 +157,85 @@ export type Database = {
           },
         ]
       }
+      product_fixed_options: {
+        Row: {
+          created_at: string
+          id: string
+          option_type: string
+          option_value: string
+          price_modifier: number
+          product_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          option_type: string
+          option_value: string
+          price_modifier?: number
+          product_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          option_type?: string
+          option_value?: string
+          price_modifier?: number
+          product_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_fixed_options_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      product_variants: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          price_modifier: number
+          product_id: string
+          specs: Json
+          variant_name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          price_modifier?: number
+          product_id: string
+          specs?: Json
+          variant_name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          price_modifier?: number
+          product_id?: string
+          specs?: Json
+          variant_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_variants_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       products: {
         Row: {
           base_price: number
           category: string | null
           created_at: string
+          customization_type: string
           description: string | null
           id: string
           image: string | null
@@ -171,6 +245,7 @@ export type Database = {
           base_price?: number
           category?: string | null
           created_at?: string
+          customization_type?: string
           description?: string | null
           id?: string
           image?: string | null
@@ -180,6 +255,7 @@ export type Database = {
           base_price?: number
           category?: string | null
           created_at?: string
+          customization_type?: string
           description?: string | null
           id?: string
           image?: string | null

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/AuthContext';
@@ -10,6 +10,8 @@ import ReviewSection from '@/components/ReviewSection';
 import ImageUploader from '@/components/ImageUploader';
 import BrandSelector from '@/components/BrandSelector';
 import ConfiguratorPreview from '@/components/ConfiguratorPreview';
+import SemiConfigurator from '@/components/SemiConfigurator';
+import FixedConfigurator from '@/components/FixedConfigurator';
 
 interface Component {
   id: string;
@@ -25,13 +27,14 @@ export default function Configurator() {
   const { addItem } = useCart();
   const [product, setProduct] = useState<any>(null);
   const [components, setComponents] = useState<Component[]>([]);
-  const [selected, setSelected] = useState<Record<string, Component>>({});
+  const [selected, setSelected] = useState<Record<string, { id?: string; name: string; price: number }>>({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [customImage, setCustomImage] = useState('');
   const [sharedBuildId, setSharedBuildId] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [brandStep, setBrandStep] = useState(true);
+  const [dynamicTotal, setDynamicTotal] = useState<number | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -45,15 +48,18 @@ export default function Configurator() {
     });
   }, [id]);
 
+  const customizationType: string = product?.customization_type || 'full';
   const componentTypes = [...new Set(components.map(c => c.component_type))];
   const basePrice = product ? Number(product.base_price) : 0;
-  const componentTotal = Object.values(selected).reduce((sum, c) => sum + Number(c.price), 0);
-  const totalPrice = basePrice + componentTotal;
+  const componentTotal = customizationType === 'full'
+    ? Object.values(selected).reduce((sum, c) => sum + Number(c.price), 0)
+    : 0;
+  const totalPrice = dynamicTotal ?? (basePrice + componentTotal);
 
   const supportsImageUpload = product && ['phone-case', 't-shirt'].includes(product.image);
 
   const getCompatibilityWarning = () => {
-    if (!product || product.image !== 'gaming-pc') return null;
+    if (!product || product.image !== 'gaming-pc' || customizationType !== 'full') return null;
     const cpu = selected['CPU'];
     const motherboard = selected['Motherboard'];
     if (cpu && motherboard) {
@@ -74,17 +80,26 @@ export default function Configurator() {
     setSelected(prev => ({ ...prev, [type]: component }));
   };
 
-  const handleAddToCart = () => {
-    if (!product) return;
+  const handleDynamicConfigChange = useCallback((config: Record<string, { name: string; price: number }>, total: number) => {
+    setSelected(config as any);
+    setDynamicTotal(total);
+  }, []);
+
+  const buildConfig = () => {
     const config: Record<string, { name: string; price: number }> = {};
     Object.entries(selected).forEach(([type, comp]) => {
       config[type] = { name: comp.name, price: Number(comp.price) };
     });
+    return config;
+  };
+
+  const handleAddToCart = () => {
+    if (!product) return;
     addItem({
       productId: product.id,
       productName: product.name,
       basePrice,
-      configuration: config,
+      configuration: buildConfig(),
       totalPrice,
       image: product.image,
       brand: selectedBrand || undefined,
@@ -95,39 +110,27 @@ export default function Configurator() {
 
   const handleBuyNow = () => {
     if (!product) return;
-    const config: Record<string, { name: string; price: number }> = {};
-    Object.entries(selected).forEach(([type, comp]) => {
-      config[type] = { name: comp.name, price: Number(comp.price) };
-    });
     addItem({
       productId: product.id,
       productName: product.name,
       basePrice,
-      configuration: config,
+      configuration: buildConfig(),
       totalPrice,
       image: product.image,
       brand: selectedBrand || undefined,
     });
     toast.success('Added to cart!');
-    if (user) {
-      navigate('/checkout');
-    } else {
-      navigate('/login');
-    }
+    navigate(user ? '/checkout' : '/login');
   };
 
   const handleSaveBuild = async () => {
     if (!user) { toast.error('Please log in to save builds'); navigate('/login'); return; }
     if (!product) return;
     setSaving(true);
-    const config: Record<string, { name: string; price: number }> = {};
-    Object.entries(selected).forEach(([type, comp]) => {
-      config[type] = { name: comp.name, price: Number(comp.price) };
-    });
     const { data, error } = await supabase.from('builds').insert({
       user_id: user.id,
       product_id: product.id,
-      configuration: config,
+      configuration: buildConfig(),
       total_price: totalPrice,
       brand: selectedBrand,
     } as any).select().single();
@@ -140,12 +143,8 @@ export default function Configurator() {
   };
 
   const handleShareBuild = () => {
-    if (!sharedBuildId) {
-      toast.error('Save the build first to share it');
-      return;
-    }
-    const url = `${window.location.origin}/build/${sharedBuildId}`;
-    navigator.clipboard.writeText(url);
+    if (!sharedBuildId) { toast.error('Save the build first to share it'); return; }
+    navigator.clipboard.writeText(`${window.location.origin}/build/${sharedBuildId}`);
     toast.success('Share link copied to clipboard!');
   };
 
@@ -172,24 +171,27 @@ export default function Configurator() {
       <BrandSelector
         productId={product.id}
         productName={product.name}
-        onSelect={(brand) => {
-          setSelectedBrand(brand);
-          setBrandStep(false);
-        }}
+        onSelect={(brand) => { setSelectedBrand(brand); setBrandStep(false); }}
         onSkip={() => setBrandStep(false)}
       />
     );
   }
 
+  const hasSelection = Object.keys(selected).length > 0;
+
+  const typeLabel = customizationType === 'full' ? 'Select your components'
+    : customizationType === 'semi' ? 'Choose a configuration'
+    : 'Choose your options';
+
   return (
     <div className="container mx-auto px-4 py-12 animate-fade-in">
-      <h1 className="font-display text-3xl font-bold mb-2">
+      <h1 className="font-display text-3xl font-bold mb-1">
         Configure: {product.name}{selectedBrand ? ` (${selectedBrand})` : ''}
       </h1>
-      <p className="text-muted-foreground mb-8">Select your components</p>
+      <p className="text-muted-foreground mb-8">{typeLabel}</p>
 
       <div className="grid lg:grid-cols-3 gap-8">
-        {/* Left: Component Selection */}
+        {/* Left: Config Area */}
         <div className="lg:col-span-2 space-y-6">
           {warning && (
             <div className="flex items-start gap-2 p-4 bg-destructive/10 border border-destructive/20 rounded-xl">
@@ -198,14 +200,15 @@ export default function Configurator() {
             </div>
           )}
 
-          {componentTypes.map(type => {
+          {/* Full mode: existing component selectors */}
+          {customizationType === 'full' && componentTypes.map(type => {
             const typeComponents = components.filter(c => c.component_type === type);
             return (
               <div key={type} className="bg-card border border-border rounded-xl p-6 space-y-4">
                 <h3 className="font-display text-lg font-semibold">{type}</h3>
                 <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
                   {typeComponents.map(comp => {
-                    const isSelected = selected[type]?.id === comp.id;
+                    const isSelected = selected[type]?.name === comp.name && selected[type]?.price === comp.price;
                     return (
                       <button
                         key={comp.id}
@@ -227,6 +230,24 @@ export default function Configurator() {
             );
           })}
 
+          {/* Semi mode: variant selector + optional upgrades */}
+          {customizationType === 'semi' && (
+            <SemiConfigurator
+              productId={product.id}
+              basePrice={basePrice}
+              onConfigChange={handleDynamicConfigChange}
+            />
+          )}
+
+          {/* Fixed mode: simple options (color, size, material) */}
+          {customizationType === 'fixed' && (
+            <FixedConfigurator
+              productId={product.id}
+              basePrice={basePrice}
+              onConfigChange={handleDynamicConfigChange}
+            />
+          )}
+
           {supportsImageUpload && (
             <div className="bg-card border border-border rounded-xl p-6">
               <ImageUploader onUpload={setCustomImage} currentUrl={customImage} />
@@ -240,18 +261,18 @@ export default function Configurator() {
         <div className="space-y-4">
           <ConfiguratorPreview
             product={product}
-            selected={selected}
+            selected={selected as any}
             selectedBrand={selectedBrand}
             customImage={customImage}
             basePrice={basePrice}
             totalPrice={totalPrice}
             onAddToCart={handleAddToCart}
             onBuyNow={handleBuyNow}
-            hasSelection={Object.keys(selected).length > 0}
+            hasSelection={hasSelection}
           />
 
           <div className="space-y-2">
-            <Button variant="outline" className="w-full" onClick={handleSaveBuild} disabled={saving || Object.keys(selected).length === 0}>
+            <Button variant="outline" className="w-full" onClick={handleSaveBuild} disabled={saving || !hasSelection}>
               <Save className="mr-2 h-4 w-4" /> {saving ? 'Saving...' : 'Save Build'}
             </Button>
             {sharedBuildId && (
