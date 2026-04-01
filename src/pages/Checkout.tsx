@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { CheckCircle } from 'lucide-react';
+import { formatPrice } from '@/lib/currency';
 
 export default function Checkout() {
   const { user } = useAuth();
@@ -21,35 +22,19 @@ export default function Checkout() {
   const handleOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || items.length === 0) return;
-    if (!address.trim() || !phone.trim()) {
-      toast.error('Please fill in all fields');
-      return;
-    }
+    if (!address.trim() || !phone.trim()) { toast.error('Please fill in all fields'); return; }
     setLoading(true);
 
-    // Save builds and create orders
     for (const item of items) {
       const config: Record<string, { name: string; price: number }> = {};
-      Object.entries(item.configuration).forEach(([k, v]) => {
-        config[k] = { name: v.name, price: v.price };
-      });
+      Object.entries(item.configuration).forEach(([k, v]) => { config[k] = { name: v.name, price: v.price }; });
 
       const { data: build } = await supabase.from('builds').insert({
-        user_id: user.id,
-        product_id: item.productId,
-        configuration: config,
-        total_price: item.totalPrice * item.quantity,
-        brand: item.brand || null,
+        user_id: user.id, product_id: item.productId, configuration: config, total_price: item.totalPrice * item.quantity, brand: item.brand || null,
       } as any).select().single();
 
       await supabase.from('orders').insert({
-        user_id: user.id,
-        build_id: build?.id,
-        total_price: item.totalPrice * item.quantity,
-        shipping_address: address,
-        phone,
-        status: 'confirmed',
-        brand: item.brand || null,
+        user_id: user.id, build_id: build?.id, total_price: item.totalPrice * item.quantity, shipping_address: address, phone, status: 'confirmed', brand: item.brand || null,
       } as any);
     }
 
@@ -81,12 +66,12 @@ export default function Checkout() {
         {items.map((item, i) => (
           <div key={i} className="flex justify-between text-sm">
             <span>{item.productName} x{item.quantity}</span>
-            <span className="font-medium">${(item.totalPrice * item.quantity).toFixed(2)}</span>
+            <span className="font-medium">{formatPrice(item.totalPrice * item.quantity)}</span>
           </div>
         ))}
         <div className="border-t pt-2 flex justify-between font-bold">
           <span>Total</span>
-          <span className="text-primary">${total.toFixed(2)}</span>
+          <span className="text-primary">{formatPrice(total)}</span>
         </div>
       </div>
 
@@ -98,7 +83,7 @@ export default function Checkout() {
         </div>
         <div className="space-y-2">
           <Label htmlFor="phone">Phone Number</Label>
-          <Input id="phone" type="tel" placeholder="+1 234 567 8900" value={phone} onChange={e => setPhone(e.target.value)} required />
+          <Input id="phone" type="tel" placeholder="+91 98765 43210" value={phone} onChange={e => setPhone(e.target.value)} required />
         </div>
         <Button type="submit" className="w-full" disabled={loading}>
           {loading ? 'Processing...' : 'Confirm Order'}

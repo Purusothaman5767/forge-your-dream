@@ -220,7 +220,7 @@ export default function Configurator() {
                         {isSelected && <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />}
                         <p className="font-medium text-sm">{comp.name}</p>
                         <p className="text-primary font-bold text-sm mt-1">
-                          {Number(comp.price) === 0 ? 'Included' : `+$${Number(comp.price).toFixed(2)}`}
+                          {Number(comp.price) === 0 ? 'Included' : `+₹${(Number(comp.price) * 80).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                         </p>
                       </button>
                     );

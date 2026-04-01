@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Package, ShoppingBag, Wrench, Share2, GitCompareArrows, Copy, Check, Wand2 } from 'lucide-react';
+import { Package, ShoppingBag, Wrench, Share2, GitCompareArrows, Check, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatPrice } from '@/lib/currency';
 
 export default function Dashboard() {
   const { profile, user } = useAuth();
@@ -62,16 +63,13 @@ export default function Dashboard() {
       </div>
 
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Saved Builds */}
         <div className="bg-card border rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-2">
             <Package className="h-5 w-5 text-primary" />
             <h2 className="font-display text-xl font-semibold">Saved Builds</h2>
           </div>
           {loading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map(i => <div key={i} className="h-12 bg-muted rounded animate-pulse" />)}
-            </div>
+            <div className="space-y-3">{[1, 2, 3].map(i => <div key={i} className="h-12 bg-muted rounded animate-pulse" />)}</div>
           ) : builds.length === 0 ? (
             <p className="text-muted-foreground text-sm">No builds yet. Start customizing!</p>
           ) : (
@@ -83,7 +81,7 @@ export default function Dashboard() {
                     <p className="text-xs text-muted-foreground">{new Date(b.created_at).toLocaleDateString()}{b.brand ? ` · ${b.brand}` : ''}</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <p className="font-bold text-sm">${Number(b.total_price).toFixed(2)}</p>
+                    <p className="font-bold text-sm">{formatPrice(Number(b.total_price))}</p>
                     <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleShare(b.id)}>
                       {copiedId === b.id ? <Check className="h-3.5 w-3.5 text-primary" /> : <Share2 className="h-3.5 w-3.5" />}
                     </Button>
@@ -94,16 +92,13 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* Order History */}
         <div className="bg-card border rounded-xl p-6 space-y-4">
           <div className="flex items-center gap-2">
             <ShoppingBag className="h-5 w-5 text-primary" />
             <h2 className="font-display text-xl font-semibold">Recent Orders</h2>
           </div>
           {loading ? (
-            <div className="space-y-3">
-              {[1, 2, 3].map(i => <div key={i} className="h-12 bg-muted rounded animate-pulse" />)}
-            </div>
+            <div className="space-y-3">{[1, 2, 3].map(i => <div key={i} className="h-12 bg-muted rounded animate-pulse" />)}</div>
           ) : orders.length === 0 ? (
             <p className="text-muted-foreground text-sm">No orders yet.</p>
           ) : (
@@ -114,7 +109,7 @@ export default function Dashboard() {
                     <p className="text-xs text-muted-foreground">{new Date(o.created_at).toLocaleDateString()}</p>
                     <span className="inline-block mt-1 text-xs px-2 py-0.5 rounded-full bg-accent text-accent-foreground capitalize">{o.status}</span>
                   </div>
-                  <p className="font-bold text-sm">${Number(o.total_price).toFixed(2)}</p>
+                  <p className="font-bold text-sm">{formatPrice(Number(o.total_price))}</p>
                 </div>
               ))}
             </div>

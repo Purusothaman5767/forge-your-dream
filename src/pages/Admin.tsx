@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { DollarSign, Package, ShoppingBag, BarChart3, Plus, Trash2 } from 'lucide-react';
 import { Navigate } from 'react-router-dom';
 import AdminAnalytics from '@/components/AdminAnalytics';
+import { formatPrice } from '@/lib/currency';
 
 const CATEGORIES = ['Electronics', 'Gaming', 'Accessories', 'Fashion'];
 
@@ -23,14 +24,12 @@ export default function Admin() {
   const [components, setComponents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // New product form
   const [newName, setNewName] = useState('');
   const [newDesc, setNewDesc] = useState('');
   const [newPrice, setNewPrice] = useState('');
   const [newCategory, setNewCategory] = useState('Electronics');
   const [newImage, setNewImage] = useState('');
 
-  // New component form
   const [compProductId, setCompProductId] = useState('');
   const [compType, setCompType] = useState('');
   const [compName, setCompName] = useState('');
@@ -65,13 +64,7 @@ export default function Admin() {
 
   const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await supabase.from('products').insert({
-      name: newName,
-      description: newDesc,
-      base_price: parseFloat(newPrice),
-      category: newCategory,
-      image: newImage || null,
-    }).select().single();
+    const { data, error } = await supabase.from('products').insert({ name: newName, description: newDesc, base_price: parseFloat(newPrice), category: newCategory, image: newImage || null }).select().single();
     if (error) { toast.error('Failed to add product'); return; }
     setProducts(prev => [...prev, data]);
     setNewName(''); setNewDesc(''); setNewPrice(''); setNewImage('');
@@ -87,12 +80,7 @@ export default function Admin() {
 
   const handleAddComponent = async (e: React.FormEvent) => {
     e.preventDefault();
-    const { data, error } = await supabase.from('components').insert({
-      product_id: compProductId,
-      component_type: compType,
-      name: compName,
-      price: parseFloat(compPrice),
-    }).select('*, products(name)').single();
+    const { data, error } = await supabase.from('components').insert({ product_id: compProductId, component_type: compType, name: compName, price: parseFloat(compPrice) }).select('*, products(name)').single();
     if (error) { toast.error('Failed to add component'); return; }
     setComponents(prev => [...prev, data]);
     setCompType(''); setCompName(''); setCompPrice('');
@@ -117,10 +105,9 @@ export default function Admin() {
     <div className="container mx-auto px-4 py-12 animate-fade-in">
       <h1 className="font-display text-3xl font-bold mb-8">Admin Dashboard</h1>
 
-      {/* Stats */}
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { icon: DollarSign, label: 'Total Revenue', value: `$${totalRevenue.toFixed(2)}` },
+          { icon: DollarSign, label: 'Total Revenue', value: formatPrice(totalRevenue) },
           { icon: Package, label: 'Products', value: products.length },
           { icon: ShoppingBag, label: 'Orders', value: orders.length },
           { icon: BarChart3, label: 'Confirmed', value: confirmedOrders },
@@ -175,7 +162,7 @@ export default function Admin() {
                   <TableRow key={p.id}>
                     <TableCell className="font-medium">{p.name}</TableCell>
                     <TableCell>{p.category}</TableCell>
-                    <TableCell>${Number(p.base_price).toFixed(2)}</TableCell>
+                    <TableCell>{formatPrice(Number(p.base_price))}</TableCell>
                     <TableCell><Button variant="ghost" size="icon" onClick={() => handleDeleteProduct(p.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                   </TableRow>
                 ))}
@@ -212,7 +199,7 @@ export default function Admin() {
                     <TableCell className="text-muted-foreground">{c.products?.name}</TableCell>
                     <TableCell>{c.component_type}</TableCell>
                     <TableCell className="font-medium">{c.name}</TableCell>
-                    <TableCell>${Number(c.price).toFixed(2)}</TableCell>
+                    <TableCell>{formatPrice(Number(c.price))}</TableCell>
                     <TableCell><Button variant="ghost" size="icon" onClick={() => handleDeleteComponent(c.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button></TableCell>
                   </TableRow>
                 ))}
@@ -231,7 +218,7 @@ export default function Admin() {
                 {orders.map(o => (
                   <TableRow key={o.id}>
                     <TableCell className="text-sm">{new Date(o.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell className="font-medium">${Number(o.total_price).toFixed(2)}</TableCell>
+                    <TableCell className="font-medium">{formatPrice(Number(o.total_price))}</TableCell>
                     <TableCell><span className="text-xs px-2 py-1 rounded-full bg-accent text-accent-foreground capitalize">{o.status}</span></TableCell>
                     <TableCell className="text-sm text-muted-foreground truncate max-w-[200px]">{o.shipping_address || '—'}</TableCell>
                     <TableCell>

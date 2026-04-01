@@ -1,4 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { formatPrice } from '@/lib/currency';
 
 interface AdminAnalyticsProps {
   orders: any[];
@@ -11,7 +12,6 @@ export default function AdminAnalytics({ orders, products }: AdminAnalyticsProps
   const totalRevenue = orders.reduce((s, o) => s + Number(o.total_price), 0);
   const avgOrderValue = orders.length > 0 ? totalRevenue / orders.length : 0;
 
-  // Orders by month
   const monthlyData: Record<string, number> = {};
   orders.forEach(o => {
     const month = new Date(o.created_at).toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
@@ -19,19 +19,9 @@ export default function AdminAnalytics({ orders, products }: AdminAnalyticsProps
   });
   const barData = Object.entries(monthlyData).map(([month, revenue]) => ({ month, revenue }));
 
-  // Orders by status
   const statusCounts: Record<string, number> = {};
   orders.forEach(o => { statusCounts[o.status] = (statusCounts[o.status] || 0) + 1; });
   const pieData = Object.entries(statusCounts).map(([name, value]) => ({ name, value }));
-
-  // Most popular product (by order count - approximate via builds)
-  const productOrderCount: Record<string, number> = {};
-  orders.forEach(o => {
-    if (o.build_id) {
-      // We approximate — in a real app we'd join
-      productOrderCount[o.build_id] = (productOrderCount[o.build_id] || 0) + 1;
-    }
-  });
 
   return (
     <div className="space-y-6">
@@ -42,16 +32,15 @@ export default function AdminAnalytics({ orders, products }: AdminAnalyticsProps
         </div>
         <div className="bg-muted/50 rounded-lg p-4 text-center">
           <p className="text-sm text-muted-foreground">Total Revenue</p>
-          <p className="font-display text-2xl font-bold text-primary">${totalRevenue.toFixed(2)}</p>
+          <p className="font-display text-2xl font-bold text-primary">{formatPrice(totalRevenue)}</p>
         </div>
         <div className="bg-muted/50 rounded-lg p-4 text-center">
           <p className="text-sm text-muted-foreground">Avg Order Value</p>
-          <p className="font-display text-2xl font-bold">${avgOrderValue.toFixed(2)}</p>
+          <p className="font-display text-2xl font-bold">{formatPrice(avgOrderValue)}</p>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Revenue Chart */}
         <div className="bg-card border rounded-xl p-6">
           <h3 className="font-display font-semibold mb-4">Revenue by Month</h3>
           {barData.length > 0 ? (
@@ -59,7 +48,7 @@ export default function AdminAnalytics({ orders, products }: AdminAnalyticsProps
               <BarChart data={barData}>
                 <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} />
-                <Tooltip formatter={(v: number) => `$${v.toFixed(2)}`} />
+                <Tooltip formatter={(v: number) => formatPrice(v)} />
                 <Bar dataKey="revenue" fill="hsl(25, 95%, 53%)" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
@@ -68,7 +57,6 @@ export default function AdminAnalytics({ orders, products }: AdminAnalyticsProps
           )}
         </div>
 
-        {/* Status Distribution */}
         <div className="bg-card border rounded-xl p-6">
           <h3 className="font-display font-semibold mb-4">Order Status</h3>
           {pieData.length > 0 ? (
