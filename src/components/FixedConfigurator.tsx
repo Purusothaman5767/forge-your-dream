@@ -99,7 +99,7 @@ export default function FixedConfigurator({ productId, basePrice, onConfigChange
                       <div className={`w-10 h-10 rounded-full ${swatch} shadow-sm ${isSelected ? 'ring-2 ring-primary ring-offset-2 ring-offset-background' : ''}`} />
                       <span className="text-[11px] font-medium">{opt.option_value}</span>
                       {Number(opt.price_modifier) > 0 && (
-                        <span className="text-[10px] text-primary font-semibold">+${Number(opt.price_modifier).toFixed(2)}</span>
+                        <span className="text-[10px] text-primary font-semibold">+₹{(Number(opt.price_modifier) * 80).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                       )}
                     </button>
                   );
