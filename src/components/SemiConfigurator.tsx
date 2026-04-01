@@ -81,7 +81,7 @@ export default function SemiConfigurator({ productId, basePrice, onConfigChange 
                     {v.description && <p className="text-sm text-muted-foreground mt-1">{v.description}</p>}
                   </div>
                   <span className="text-primary font-bold text-sm whitespace-nowrap">
-                    {Number(v.price_modifier) === 0 ? 'Base' : `+$${Number(v.price_modifier).toFixed(2)}`}
+                    {Number(v.price_modifier) === 0 ? 'Base' : `+₹${(Number(v.price_modifier) * 80).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-1.5 mt-3">

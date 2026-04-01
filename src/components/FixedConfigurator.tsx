@@ -116,7 +116,7 @@ export default function FixedConfigurator({ productId, basePrice, onConfigChange
                     {isSelected && <Check className="absolute top-2 right-2 h-4 w-4 text-primary" />}
                     <p className="font-medium text-sm">{opt.option_value}</p>
                     <p className="text-primary font-bold text-sm mt-1">
-                      {Number(opt.price_modifier) === 0 ? 'Included' : `+$${Number(opt.price_modifier).toFixed(2)}`}
+                      {Number(opt.price_modifier) === 0 ? 'Included' : `+₹${(Number(opt.price_modifier) * 80).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                     </p>
                   </button>
                 );
